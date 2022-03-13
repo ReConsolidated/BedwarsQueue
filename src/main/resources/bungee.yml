@@ -1,0 +1,5 @@
+name: BedwarsQueue
+version: '${project.version}'
+main: io.github.reconsolidated.bedwarsqueue.BedwarsQueue
+depends: [ PartyAndFriends ]
+
