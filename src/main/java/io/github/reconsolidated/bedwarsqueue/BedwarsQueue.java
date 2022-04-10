@@ -3,6 +3,7 @@ package io.github.reconsolidated.bedwarsqueue;
 import de.simonsator.partyandfriends.api.pafplayers.OnlinePAFPlayer;
 import de.simonsator.partyandfriends.api.party.PartyManager;
 import de.simonsator.partyandfriends.api.party.PlayerParty;
+import lombok.Getter;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.ProxyServer;
@@ -16,6 +17,7 @@ import java.util.concurrent.TimeUnit;
 
 public final class BedwarsQueue extends Plugin {
 
+    @Getter
     private List<Queue> queues;
 
     @Override
@@ -23,7 +25,7 @@ public final class BedwarsQueue extends Plugin {
         // Plugin startup logic
         ProxyServer.getInstance().getPluginManager().registerCommand(this, new BDQueueCommand(this));
         queues = new ArrayList<>();
-        queues.add(new Queue(this,"bedwars1", "bedwars1", 5));
+        queues.add(new Queue(this,"bedwars1", "bedwars1", 2));
 
         for (Queue q : queues) {
             ProxyServer.getInstance().getScheduler().schedule(this, q, 0L, 500L, TimeUnit.MILLISECONDS);
@@ -74,7 +76,7 @@ public final class BedwarsQueue extends Plugin {
         }
     }
 
-    private Queue getQueue(String name) {
+    Queue getQueue(String name) {
         for (Queue q : queues) {
             if (q.getName().equals(name)) {
                 return q;
@@ -88,5 +90,17 @@ public final class BedwarsQueue extends Plugin {
     @Override
     public void onDisable() {
         // Plugin shutdown logic
+    }
+
+    public void leaveQueue(ProxiedPlayer player) {
+        for (Queue queue : queues) {
+            if (queue.isInQueue(player)) {
+                if (queue.remove(player.getName())) {
+                    player.sendMessage(ChatColor.YELLOW + "Opuszczono kolejkę.");
+                } else {
+                    player.sendMessage(ChatColor.RED + "Nie jesteś w żadnej kolejce!");
+                }
+            }
+        }
     }
 }

@@ -36,10 +36,6 @@ public class PreparedGame {
         double average = eloSum / playersCount;
         long waitTime = (System.currentTimeMillis() - player.getQueueJoinTime()) / 1000;
 
-//        ProxyServer.getInstance().getLogger().info("Checking if can add player " + player.getPlayers().get(0).getName());
-//        ProxyServer.getInstance().getLogger().info("Elo:  " + player.getElo());
-//        ProxyServer.getInstance().getLogger().info("Average:  " + average);
-//        ProxyServer.getInstance().getLogger().info("WaitTime:  " + waitTime);
 
         return Math.abs(player.getElo() - average) < 100 + waitTime / 2.0;
     }

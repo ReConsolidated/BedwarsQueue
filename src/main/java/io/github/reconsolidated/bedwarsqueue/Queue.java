@@ -1,5 +1,8 @@
 package io.github.reconsolidated.bedwarsqueue;
 
+import de.simonsator.partyandfriends.api.pafplayers.OnlinePAFPlayer;
+import de.simonsator.partyandfriends.api.party.PartyManager;
+import de.simonsator.partyandfriends.api.party.PlayerParty;
 import io.github.reconsolidated.jediscommunicator.JedisCommunicator;
 import io.github.reconsolidated.jediscommunicator.JedisServerInfo;
 import lombok.Getter;
@@ -11,7 +14,6 @@ import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 
-import java.lang.reflect.Proxy;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -60,7 +62,6 @@ public class Queue implements Runnable{
                 int playersAssigned = 0;
                 int i = 0;
 
-                ProxyServer.getInstance().getLogger().info("Players count: " + getPlayersCount());
                 while (playersAssigned < getPlayersCount()) {
                     PreparedGame game = new PreparedGame(playersToStart);
                     for (int j = i; j<queue.size(); j++) {
@@ -79,6 +80,7 @@ public class Queue implements Runnable{
             }
         });
     }
+
 
     private void startGame(List<QueueParticipant> players) {
         ServerInfo server = getEmptyServer();
@@ -147,13 +149,39 @@ public class Queue implements Runnable{
         return false;
     }
 
+    public boolean isInQueue(ProxiedPlayer player) {
+        PlayerParty party = PartyManager.getInstance().getParty(player.getUniqueId());
+        List<ProxiedPlayer> players = new ArrayList<>();
+        if (party != null) {
+            if (party.getLeader().getPlayer().equals(player)) {
+                for (OnlinePAFPlayer partyPlayer : party.getAllPlayers()) {
+                    players.add(partyPlayer.getPlayer());
+                }
+            } else {
+                player.sendMessage(new TextComponent(ChatColor.RED + "Musisz być przewodniczącym party, aby to zrobić!"));
+                return false;
+            }
+        } else {
+            players.add(player);
+        }
+        return isInQueue(players);
 
-    public void remove(ProxiedPlayer player) {
+    }
+
+
+    public boolean remove(String name) {
         for (QueueParticipant p : queue) {
-            if (p.getPlayers().contains(player)) {
-                queue.remove(p);
-                return;
+            for (ProxiedPlayer player : p.getPlayers()) {
+                if (player.getName().equalsIgnoreCase(name)) {
+                    queue.remove(p);
+                    return true;
+                }
             }
         }
+        return false;
+    }
+
+    public String getDescription() {
+        return name + ", startOn: " + playersToStart + ", players: " + getPlayersCount();
     }
 }

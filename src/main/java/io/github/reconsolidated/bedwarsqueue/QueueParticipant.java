@@ -33,7 +33,7 @@ public class QueueParticipant {
         elo = 0;
         if (attemptsLeft == 0) {
             for (ProxiedPlayer player : players) {
-                queue.remove(player);
+                queue.remove(player.getName());
                 player.sendMessage(new TextComponent(ChatColor.RED + "Wystąpił błąd podczas ładowania kolejki " +
                         "rankingowej, spróbuj ponownie za chwilę."));
             }

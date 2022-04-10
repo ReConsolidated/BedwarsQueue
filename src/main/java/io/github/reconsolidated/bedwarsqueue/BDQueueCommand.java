@@ -93,6 +93,81 @@ public class BDQueueCommand extends Command implements Listener {
                     }
                 }
             }
+            if (args[0].equalsIgnoreCase("leave")) {
+                if (args.length != 2) {
+                    sender.sendMessage(ChatColor.RED + "Correct usage:");
+                    sender.sendMessage(ChatColor.AQUA + "/bdqueue leave <player> - leave active queue");
+                } else {
+                    String playerName = args[1];
+                    ProxiedPlayer player = plugin.getProxy().getPlayer(playerName);
+                    if (player == null) {
+                        sender.sendMessage(ChatColor.RED + "This player is not online!");
+                    } else {
+                        plugin.leaveQueue(player);
+                    }
+                }
+            }
+
+            if (args[0].equalsIgnoreCase("addqueue")) {
+                if (args.length != 3) {
+                    sender.sendMessage(ChatColor.RED + "Correct usage:");
+                    sender.sendMessage(ChatColor.AQUA + "/bdqueue addqueue <name> <gamemode> - creates new queue");
+                } else {
+                    Queue queue = new Queue(plugin, args[1], args[2], 16);
+                    plugin.getQueues().add(queue);
+                    sender.sendMessage(ChatColor.GREEN + "Queue added!");
+                }
+            }
+
+            if (args[0].equalsIgnoreCase("removequeue")) {
+                if (args.length != 2) {
+                    sender.sendMessage(ChatColor.RED + "Correct usage:");
+                    sender.sendMessage(ChatColor.AQUA + "/bdqueue removequeue <name> - removes queue");
+                } else {
+                    for (Queue q : plugin.getQueues()) {
+                        if (q.getName().equalsIgnoreCase(args[1])) {
+                            plugin.getQueues().remove(q);
+                            sender.sendMessage(ChatColor.GREEN + "Queue deleted.");
+                            return;
+                        }
+                    }
+                    sender.sendMessage(ChatColor.RED + "Didn't find queue with that name.");
+                }
+            }
+
+            if (args[0].equalsIgnoreCase("listqueues")) {
+                if (args.length != 1) {
+                    sender.sendMessage(ChatColor.RED + "Correct usage:");
+                    sender.sendMessage(ChatColor.AQUA + "/bdqueue listqueues - list queues");
+                } else {
+                    sender.sendMessage(ChatColor.GREEN + "ACTIVE QUEUES: ");
+                    for (Queue q : plugin.getQueues()) {
+                        sender.sendMessage(" - " + q.getDescription());
+                    }
+                }
+            }
+
+            if (args[0].equalsIgnoreCase("setstartamount")) {
+                if (args.length != 3) {
+                    sender.sendMessage(ChatColor.RED + "Correct usage:");
+                    sender.sendMessage(ChatColor.AQUA + "/bdqueue setstartamount <queuename> <newstartamount> - set queue required players to start.");
+                } else {
+                    Queue queue = plugin.getQueue(args[1]);
+                    if (queue == null) {
+                        sender.sendMessage(ChatColor.RED + "Nie ma takiego queue");
+                    } else {
+                        try {
+                            queue.setPlayersToStart(Integer.parseInt(args[2]));
+                            sender.sendMessage(ChatColor.GREEN + "Ustawiono rozmiar kolejki");
+                        } catch (NumberFormatException exception) {
+                            sender.sendMessage(ChatColor.RED + "Podaj prawidłową liczbę.");
+                        }
+
+                    }
+                }
+            }
+
+
         }
     }
 
@@ -122,5 +197,9 @@ public class BDQueueCommand extends Command implements Listener {
         sender.sendMessage(ChatColor.AQUA + "/bdqueue join <player> <queue> - adds player to queue");
         sender.sendMessage(ChatColor.AQUA + "/bdqueue leave <player> - leaves active queue");
         sender.sendMessage(ChatColor.AQUA + "/bdqueue setelo <player> <elo> - sets player elo to given amount");
+        sender.sendMessage(ChatColor.AQUA + "/bdqueue addqueue <name> <playersToStart> - creates new queue");
+        sender.sendMessage(ChatColor.AQUA + "/bdqueue removequeue <name> - removes queue");
+        sender.sendMessage(ChatColor.AQUA + "/bdqueue listqueues - list queues");
+        sender.sendMessage(ChatColor.AQUA + "/bdqueue setstartamount <queuename> <newstartamount> - set queue required players to start.");
     }
 }
