@@ -35,7 +35,6 @@ public class Queue implements Runnable{
         this.playersToStart = playersToStart;
     }
 
-
     @Override
     public void run() {
         ProxyServer.getInstance().getScheduler().runAsync(plugin, () -> {
@@ -59,23 +58,22 @@ public class Queue implements Runnable{
                 }
             }
             if (getPlayersCount() >= playersToStart) {
-                int playersAssigned = 0;
-                int i = 0;
-
-                while (playersAssigned < getPlayersCount()) {
+                for (int i = 0; i<getPlayersCount(); i++) {
                     PreparedGame game = new PreparedGame(playersToStart);
-                    for (int j = i; j<queue.size(); j++) {
-                        QueueParticipant p = queue.get(j);
-                        if (game.canAddPlayer(p)) {
-                            game.addPlayer(p);
-                            playersAssigned += p.getPlayers().size();
+                    QueueParticipant p = queue.get(i);
+                    game.addPlayer(p);
+                    for (int j = 0; j<getPlayersCount(); j++) {
+                        int index = (i+j)%getPlayersCount();
+                        if (index==i) continue;
+                        QueueParticipant p2 = queue.get(index);
+                        if (game.canAddPlayer(p2)) {
+                            game.addPlayer(p2);
                         }
                         if (game.canStart()) {
                             startGame(game.getPlayers());
                             return;
                         }
                     }
-                    i++;
                 }
             }
         });
@@ -165,8 +163,8 @@ public class Queue implements Runnable{
             players.add(player);
         }
         return isInQueue(players);
-
     }
+
 
 
     public boolean remove(String name) {

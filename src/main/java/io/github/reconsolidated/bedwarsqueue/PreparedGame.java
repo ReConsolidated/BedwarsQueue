@@ -33,6 +33,8 @@ public class PreparedGame {
             playersCount += p.getPlayers().size();
         }
 
+        if (playersCount == 0) return true;
+
         double average = eloSum / playersCount;
         long waitTime = (System.currentTimeMillis() - player.getQueueJoinTime()) / 1000;
 
