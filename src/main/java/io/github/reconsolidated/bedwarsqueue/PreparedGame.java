@@ -39,7 +39,7 @@ public class PreparedGame {
         long waitTime = (System.currentTimeMillis() - player.getQueueJoinTime()) / 1000;
 
 
-        return Math.abs(player.getElo() - average) < 100 + waitTime / 2.0;
+        return Math.abs(player.getElo() - average) < 100 + waitTime * 2;
     }
 
     public boolean canStart() {

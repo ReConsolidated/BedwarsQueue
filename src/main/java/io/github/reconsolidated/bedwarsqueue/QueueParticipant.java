@@ -41,7 +41,7 @@ public class QueueParticipant {
         }
         ProxyServer.getInstance().getScheduler().runAsync(plugin, () -> {
             for (ProxiedPlayer player : players) {
-                elo += getPlayerElo(player.getName());
+                elo += getPlayerElo(player.getName(), queue.getName());
                 if (elo == 0) {
                     ProxyServer.getInstance().getLogger().info("Couldn't load player elo: " + player.getName() + ", attempts left: " + (attemptsLeft - 1));
                     loadElo(attemptsLeft-1);

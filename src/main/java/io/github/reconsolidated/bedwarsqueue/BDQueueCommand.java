@@ -70,12 +70,13 @@ public class BDQueueCommand extends Command implements Listener {
                 }
             }
             if (args[0].equalsIgnoreCase("setelo")) {
-                if (args.length != 3) {
+                if (args.length != 4) {
                     sender.sendMessage(ChatColor.RED + "Correct usage:");
-                    sender.sendMessage(ChatColor.AQUA + "/bdqueue setelo <player> <elo> - sets player elo to given amount");
+                    sender.sendMessage(ChatColor.AQUA + "/bdqueue setelo <player> <queue> <elo> - sets player elo to given amount");
                 } else {
                     String playerName = args[1];
-                    String eloString = args[2];
+                    String eloString = args[3];
+                    String queueName = args[2];
                     double elo;
                     try {
                         elo = Double.parseDouble(eloString);
@@ -89,7 +90,8 @@ public class BDQueueCommand extends Command implements Listener {
                     if (player == null) {
                         sender.sendMessage(ChatColor.RED + "This player is not online!");
                     } else {
-                        setPlayerElo(player.getName(), elo);
+                        setPlayerElo(player.getName(), queueName, elo);
+                        sender.sendMessage(ChatColor.GREEN + "Player elo set.");
                     }
                 }
             }
@@ -196,7 +198,7 @@ public class BDQueueCommand extends Command implements Listener {
         sender.sendMessage(ChatColor.AQUA + "BDQueue commands:");
         sender.sendMessage(ChatColor.AQUA + "/bdqueue join <player> <queue> - adds player to queue");
         sender.sendMessage(ChatColor.AQUA + "/bdqueue leave <player> - leaves active queue");
-        sender.sendMessage(ChatColor.AQUA + "/bdqueue setelo <player> <elo> - sets player elo to given amount");
+        sender.sendMessage(ChatColor.AQUA + "/bdqueue setelo <player> <queue> <elo> - sets player elo to given amount");
         sender.sendMessage(ChatColor.AQUA + "/bdqueue addqueue <name> <playersToStart> - creates new queue");
         sender.sendMessage(ChatColor.AQUA + "/bdqueue removequeue <name> - removes queue");
         sender.sendMessage(ChatColor.AQUA + "/bdqueue listqueues - list queues");

@@ -7,7 +7,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 public class DatabaseFunctions {
-    public static double getPlayerElo(String playerName) {
+    public static double getPlayerElo(String playerName, String queueName) {
         if (DatabaseConnector.getSql() == null) {
             ProxyServer.getInstance().getLogger().warning("Database is not connected.");
             return 0;
@@ -17,7 +17,7 @@ public class DatabaseFunctions {
             Statement statement = DatabaseConnector.getSql().createStatement();
 
             String sql = "SELECT * FROM bedwars_ranked " +
-                    "WHERE playername='" + playerName + "';";
+                    "WHERE player_name='%s' AND queue_name='%s';".formatted(playerName, queueName);
             statement.executeQuery(sql);
             ResultSet result = statement.getResultSet();
             if (result.next()) {
@@ -30,7 +30,7 @@ public class DatabaseFunctions {
         }
     }
 
-    public static void setPlayerElo(String playerName, double ELO) {
+    public static void setPlayerElo(String playerName, String queueName, double ELO) {
         if (DatabaseConnector.getSql() == null) {
             ProxyServer.getInstance().getLogger().warning("Database is not connected.");
             return;
@@ -40,10 +40,10 @@ public class DatabaseFunctions {
             Statement statement = DatabaseConnector.getSql().createStatement();
 
             String sql = "UPDATE bedwars_ranked SET elo=" + ELO
-                    + " WHERE playername='" + playerName + "';";
+                    + " WHERE player_name='%s' AND queue_name='%s';".formatted(playerName, queueName);
             statement.executeUpdate(sql);
 
-            sql = "INSERT INTO bedwars_ranked (playername, elo) VALUES  ('" + playerName + "', '" + ELO + "')" +
+            sql = "INSERT INTO bedwars_ranked (playername, queue_name, elo) VALUES  ('%s', '%s', %f)".formatted(playerName, queueName, ELO) +
                     "ON CONFLICT DO NOTHING;";
 
             statement.executeUpdate(sql);

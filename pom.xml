@@ -24,8 +24,8 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.8.1</version>
                 <configuration>
-                    <source>${java.version}</source>
-                    <target>${java.version}</target>
+                    <source>15</source>
+                    <target>15</target>
                 </configuration>
             </plugin>
             <plugin>
@@ -89,7 +89,7 @@
         <dependency>
             <groupId>io.github.reconsolidated</groupId>
             <artifactId>jediscommunicator</artifactId>
-            <version>1.09</version>
+            <version>1.10</version>
         </dependency>
         <dependency>
             <groupId>de.simonsator</groupId>

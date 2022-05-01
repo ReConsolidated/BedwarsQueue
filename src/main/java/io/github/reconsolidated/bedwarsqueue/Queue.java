@@ -88,6 +88,7 @@ public class Queue implements Runnable{
                     player.sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(ChatColor.RED + "Nie znaleziono wolnego serwera gry."));
                 }
             }
+            return;
         }
 
         for (QueueParticipant p : players) {
@@ -96,7 +97,6 @@ public class Queue implements Runnable{
                 player.connect(server);
                 player.sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(ChatColor.GREEN + "Dołączanie do rozgrywki..."));
             }
-
         }
     }
 
@@ -104,7 +104,7 @@ public class Queue implements Runnable{
         JedisCommunicator jedis = new JedisCommunicator();
         List<JedisServerInfo> servers = jedis.getServers(gameModeType);
         for (JedisServerInfo server : servers) {
-            if (server.isOpen && server.currentPlayers == 0 && server.maxPlayers > playersToStart) {
+            if (server.isOpen && server.currentPlayers == 0 && server.maxPlayers >= playersToStart) {
                 return ProxyServer.getInstance().getServerInfo(server.serverName);
             }
         }
@@ -129,7 +129,16 @@ public class Queue implements Runnable{
             for (ProxiedPlayer player : players) {
                 ProxyServer.getInstance().getLogger().info("Gracz " + player.getName() + " dodany do kolejki: "
                         + name + ", liczba graczy w kolejce: " + queue.size());
-                player.sendMessage(new TextComponent(ChatColor.GREEN + "Dołączono do kolejki: " + name));
+                player.sendMessage(new TextComponent(""));
+                player.sendMessage(new TextComponent(ChatColor.GREEN + "" + ChatColor.BOLD + "Dołączono do kolejki!"));
+                player.sendMessage(new TextComponent(ChatColor.YELLOW + "Podczas szukania gry możesz pójść na "
+                        + ChatColor.GREEN + "" + ChatColor.BOLD + " dowolny" +
+                        " inny tryb." + ChatColor.YELLOW));
+                player.sendMessage(new TextComponent(ChatColor.AQUA + "Gdy gra znajdzie odpowiednich przeciwników, " +
+                        "zostaniesz automatycznie przeniesiony/a do gry."));
+                player.sendMessage(new TextComponent(ChatColor.YELLOW + "Aby opuścić kolejkę użyj komendy " + ChatColor.RED + "/opusc."));
+                player.sendMessage(new TextComponent(""));
+
             }
         }
     }
