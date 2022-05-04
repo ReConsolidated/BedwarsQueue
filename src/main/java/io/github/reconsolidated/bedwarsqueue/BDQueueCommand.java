@@ -50,7 +50,6 @@ public class BDQueueCommand extends Command implements Listener {
                     // Check if player has tried to join queue in last 1000 ms
                     long lastJoin = queueJoinCooldowns.getOrDefault(player, 0L);
                     long diff = System.currentTimeMillis() - lastJoin;
-                    ProxyServer.getInstance().getLogger().info("Diff: " + diff);
                     if (diff < 1000) {
                         return;
                     }
