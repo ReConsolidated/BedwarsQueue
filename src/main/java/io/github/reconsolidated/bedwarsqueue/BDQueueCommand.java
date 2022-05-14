@@ -2,6 +2,8 @@ package io.github.reconsolidated.bedwarsqueue;
 
 import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteStreams;
+import io.github.reconsolidated.bedwarsqueue.Queues.Queue;
+import io.github.reconsolidated.bedwarsqueue.Queues.RankedQueue;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
@@ -114,8 +116,9 @@ public class BDQueueCommand extends Command implements Listener {
                     sender.sendMessage(ChatColor.RED + "Correct usage:");
                     sender.sendMessage(ChatColor.AQUA + "/bdqueue addqueue <name> <gamemode> - creates new queue");
                 } else {
-                    Queue queue = new Queue(plugin, args[1], args[2], 16);
+                    RankedQueue queue = new RankedQueue(plugin, args[1], args[2], 16);
                     plugin.getQueues().add(queue);
+                    ProxyServer.getInstance().getScheduler().schedule(plugin, queue, 0L, 500L, TimeUnit.MILLISECONDS);
                     sender.sendMessage(ChatColor.GREEN + "Queue added!");
                 }
             }
@@ -157,11 +160,15 @@ public class BDQueueCommand extends Command implements Listener {
                     if (queue == null) {
                         sender.sendMessage(ChatColor.RED + "Nie ma takiego queue");
                     } else {
-                        try {
-                            queue.setPlayersToStart(Integer.parseInt(args[2]));
-                            sender.sendMessage(ChatColor.GREEN + "Ustawiono rozmiar kolejki");
-                        } catch (NumberFormatException exception) {
-                            sender.sendMessage(ChatColor.RED + "Podaj prawidłową liczbę.");
+                        if (queue instanceof RankedQueue) {
+                            try {
+                                ((RankedQueue)queue).setPlayersToStart(Integer.parseInt(args[2]));
+                                sender.sendMessage(ChatColor.GREEN + "Ustawiono rozmiar kolejki");
+                            } catch (NumberFormatException exception) {
+                                sender.sendMessage(ChatColor.RED + "Podaj prawidłową liczbę.");
+                            }
+                        } else {
+                            sender.sendMessage(ChatColor.RED + "Ta komenda dotyczy tylko kolejek rankingowych!");
                         }
 
                     }

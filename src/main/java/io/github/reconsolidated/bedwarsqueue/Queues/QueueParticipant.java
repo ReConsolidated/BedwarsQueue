@@ -1,5 +1,6 @@
-package io.github.reconsolidated.bedwarsqueue;
+package io.github.reconsolidated.bedwarsqueue.Queues;
 
+import io.github.reconsolidated.bedwarsqueue.BedwarsQueue;
 import lombok.Getter;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.ProxyServer;
@@ -12,7 +13,7 @@ import static io.github.reconsolidated.bedwarsqueue.Database.DatabaseFunctions.g
 
 public class QueueParticipant {
     private final BedwarsQueue plugin;
-    private final Queue queue;
+    private final RankedQueue queue;
     @Getter
     private final List<ProxiedPlayer> players;
     @Getter
@@ -20,7 +21,7 @@ public class QueueParticipant {
     @Getter
     private final long queueJoinTime;
 
-    public QueueParticipant(BedwarsQueue plugin, Queue queue, List<ProxiedPlayer> players, long queueJoinTime) {
+    public QueueParticipant(BedwarsQueue plugin, RankedQueue queue, List<ProxiedPlayer> players, long queueJoinTime) {
         this.plugin = plugin;
         this.queue = queue;
         this.players = players;

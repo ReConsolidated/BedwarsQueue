@@ -4,6 +4,9 @@ import de.simonsator.partyandfriends.api.pafplayers.OnlinePAFPlayer;
 import de.simonsator.partyandfriends.api.party.PartyManager;
 import de.simonsator.partyandfriends.api.party.PlayerParty;
 import io.github.reconsolidated.bedwarsqueue.Listeners.RemoveFromQueueOnDisconnect;
+import io.github.reconsolidated.bedwarsqueue.Queues.Queue;
+import io.github.reconsolidated.bedwarsqueue.Queues.RankedQueue;
+import io.github.reconsolidated.bedwarsqueue.Queues.UnrankedQueue;
 import lombok.Getter;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.ChatMessageType;
@@ -24,25 +27,47 @@ public final class BedwarsQueue extends Plugin {
     @Getter
     private RejoinManager rejoinManager;
 
+    @Getter
+    private ServersManager serversManager;
+
     @Override
     public void onEnable() {
         // Plugin startup logic
         ProxyServer.getInstance().getPluginManager().registerCommand(this, new BDQueueCommand(this));
         ProxyServer.getInstance().getPluginManager().registerCommand(this, new QuitCommand(this));
         ProxyServer.getInstance().getPluginManager().registerCommand(this, new RejoinCommand(this));
-        queues = new ArrayList<>();
-        queues.add(new Queue(this,"bedwars1", "bedwars1", 2));
 
-        for (Queue q : queues) {
-            ProxyServer.getInstance().getScheduler().schedule(this, q, 0L, 500L, TimeUnit.MILLISECONDS);
-        }
 
         rejoinManager = new RejoinManager(this);
+        serversManager = new ServersManager(this);
+
+        queues = new ArrayList<>();
+        queues.add(new RankedQueue(this,"bedwars1", "bedwars1", 8));
+        queues.add(new RankedQueue(this,"bedwars2", "bedwars2", 16));
+        queues.add(new RankedQueue(this,"bedwars3", "bedwars3", 12));
+        queues.add(new RankedQueue(this,"bedwars4", "bedwars4", 16));
+        queues.add(new UnrankedQueue(this,"unranked1", "bedwars1"));
+        queues.add(new UnrankedQueue(this,"unranked2", "bedwars2"));
+        queues.add(new UnrankedQueue(this,"unranked3", "bedwars3"));
+        queues.add(new UnrankedQueue(this,"unranked4", "bedwars4"));
+
+
+
+        for (Queue q : queues) {
+            if (q instanceof RankedQueue) {
+                RankedQueue rq  = (RankedQueue) q;
+                ProxyServer.getInstance().getScheduler().schedule(this, rq, 0L, 500L, TimeUnit.MILLISECONDS);
+            }
+            serversManager.update(q.getGameModeType());
+        }
+
+
 
         ProxyServer.getInstance().getPluginManager().registerListener(this, new RemoveFromQueueOnDisconnect(this));
 
-    }
+        new PartySync(this);
 
+    }
 
     public boolean joinQueue(String queueName, ProxiedPlayer member) {
         PlayerParty party = PartyManager.getInstance().getParty(member.getUniqueId());
@@ -81,7 +106,7 @@ public final class BedwarsQueue extends Plugin {
             }
             return false;
         } else {
-            queue.joinQueue(this, players);
+            queue.joinQueue(players);
             return true;
         }
     }
@@ -115,4 +140,5 @@ public final class BedwarsQueue extends Plugin {
 
 
     }
+
 }

@@ -1,8 +1,10 @@
-package io.github.reconsolidated.bedwarsqueue;
+package io.github.reconsolidated.bedwarsqueue.Queues;
 
 import de.simonsator.partyandfriends.api.pafplayers.OnlinePAFPlayer;
 import de.simonsator.partyandfriends.api.party.PartyManager;
 import de.simonsator.partyandfriends.api.party.PlayerParty;
+import io.github.reconsolidated.bedwarsqueue.BedwarsQueue;
+import io.github.reconsolidated.bedwarsqueue.PreparedGame;
 import io.github.reconsolidated.jediscommunicator.JedisCommunicator;
 import io.github.reconsolidated.jediscommunicator.JedisServerInfo;
 import lombok.Getter;
@@ -18,16 +20,17 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class Queue implements Runnable{
+public class RankedQueue implements Queue, Runnable{
     private final BedwarsQueue plugin;
     @Getter
     private final String name;
+    @Getter
     private final String gameModeType;
     private final List<QueueParticipant> queue;
     @Setter
     private int playersToStart;
 
-    public Queue(BedwarsQueue plugin, String name, String gameModeType, int playersToStart) {
+    public RankedQueue(BedwarsQueue plugin, String name, String gameModeType, int playersToStart) {
         this.plugin = plugin;
         this.name = name;
         this.gameModeType = gameModeType;
@@ -101,10 +104,9 @@ public class Queue implements Runnable{
     }
 
     private ServerInfo getEmptyServer() {
-        JedisCommunicator jedis = new JedisCommunicator();
-        List<JedisServerInfo> servers = jedis.getServers(gameModeType);
+        List<JedisServerInfo> servers = plugin.getServersManager().getServers(gameModeType);
         for (JedisServerInfo server : servers) {
-            if (server.isOpen && server.currentPlayers == 0 && server.maxPlayers >= playersToStart) {
+            if (server.isOpen && server.currentPlayers == 0 && server.maxPlayers >= playersToStart && server.ranked) {
                 return ProxyServer.getInstance().getServerInfo(server.serverName);
             }
         }
@@ -119,7 +121,7 @@ public class Queue implements Runnable{
         return result;
     }
 
-    public synchronized void joinQueue(BedwarsQueue plugin, List<ProxiedPlayer> players) {
+    public synchronized void joinQueue(List<ProxiedPlayer> players) {
         if (isInQueue(players)) {
             for (ProxiedPlayer p : players) {
                 p.sendMessage(ChatMessageType.CHAT, new TextComponent(ChatColor.RED + "Jesteś już w kolejce!"));
@@ -189,6 +191,6 @@ public class Queue implements Runnable{
     }
 
     public String getDescription() {
-        return name + ", startOn: " + playersToStart + ", players: " + getPlayersCount();
+        return name + ", startOn: " + playersToStart + ", players: " + getPlayersCount() + " [RANKED]";
     }
 }

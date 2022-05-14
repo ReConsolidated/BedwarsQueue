@@ -1,5 +1,6 @@
 package io.github.reconsolidated.bedwarsqueue;
 
+import io.github.reconsolidated.bedwarsqueue.Queues.QueueParticipant;
 import lombok.Getter;
 
 import java.util.ArrayList;
