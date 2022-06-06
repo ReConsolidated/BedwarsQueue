@@ -19,15 +19,23 @@ public class UnrankedQueue implements Queue{
     private final String name;
     @Getter
     private final String gameModeType;
+    private int maxParty;
 
-    public UnrankedQueue(BedwarsQueue plugin, String name, String gameModeType) {
+    public UnrankedQueue(BedwarsQueue plugin, String name, String gameModeType, int maxParty) {
         this.plugin = plugin;
         this.name = name;
         this.gameModeType = gameModeType;
+        this.maxParty = maxParty;
     }
 
     @Override
     public void joinQueue(List<ProxiedPlayer> players) {
+        if (players.size() > maxParty) {
+            for (ProxiedPlayer player : players) {
+                player.sendMessage(ChatColor.RED + "Nie możesz dołączyć do tej kolejki, masz za duże party!");
+            }
+        }
+
         ServerInfo server = getServerWithSpace(players.size());
         if (server == null) {
             for (ProxiedPlayer p : players) {

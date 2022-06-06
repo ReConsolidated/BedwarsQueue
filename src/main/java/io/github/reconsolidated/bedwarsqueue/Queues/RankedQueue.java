@@ -30,12 +30,15 @@ public class RankedQueue implements Queue, Runnable{
     @Setter
     private int playersToStart;
 
-    public RankedQueue(BedwarsQueue plugin, String name, String gameModeType, int playersToStart) {
+    private int maxParty;
+
+    public RankedQueue(BedwarsQueue plugin, String name, String gameModeType, int playersToStart, int maxParty) {
         this.plugin = plugin;
         this.name = name;
         this.gameModeType = gameModeType;
         this.queue = new ArrayList<>();
         this.playersToStart = playersToStart;
+        this.maxParty = maxParty;
     }
 
     @Override
@@ -61,12 +64,12 @@ public class RankedQueue implements Queue, Runnable{
                 }
             }
             if (getPlayersCount() >= playersToStart) {
-                for (int i = 0; i<getPlayersCount(); i++) {
+                for (int i = 0; i<queue.size(); i++) {
                     PreparedGame game = new PreparedGame(playersToStart);
                     QueueParticipant p = queue.get(i);
                     game.addPlayer(p);
                     for (int j = 0; j<getPlayersCount(); j++) {
-                        int index = (i+j)%getPlayersCount();
+                        int index = (i+j)%queue.size();
                         if (index==i) continue;
                         QueueParticipant p2 = queue.get(index);
                         if (game.canAddPlayer(p2)) {
@@ -122,6 +125,12 @@ public class RankedQueue implements Queue, Runnable{
     }
 
     public synchronized void joinQueue(List<ProxiedPlayer> players) {
+        if (players.size() > maxParty) {
+            for (ProxiedPlayer player : players) {
+                player.sendMessage(ChatColor.RED + "Nie możesz dołączyć do tej kolejki, masz za duże party!");
+            }
+        }
+
         if (isInQueue(players)) {
             for (ProxiedPlayer p : players) {
                 p.sendMessage(ChatMessageType.CHAT, new TextComponent(ChatColor.RED + "Jesteś już w kolejce!"));

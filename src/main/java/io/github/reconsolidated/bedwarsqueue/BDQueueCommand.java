@@ -116,7 +116,7 @@ public class BDQueueCommand extends Command implements Listener {
                     sender.sendMessage(ChatColor.RED + "Correct usage:");
                     sender.sendMessage(ChatColor.AQUA + "/bdqueue addqueue <name> <gamemode> - creates new queue");
                 } else {
-                    RankedQueue queue = new RankedQueue(plugin, args[1], args[2], 16);
+                    RankedQueue queue = new RankedQueue(plugin, args[1], args[2], 16, 4);
                     plugin.getQueues().add(queue);
                     ProxyServer.getInstance().getScheduler().schedule(plugin, queue, 0L, 500L, TimeUnit.MILLISECONDS);
                     sender.sendMessage(ChatColor.GREEN + "Queue added!");

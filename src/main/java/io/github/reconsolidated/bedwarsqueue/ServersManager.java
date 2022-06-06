@@ -2,6 +2,7 @@ package io.github.reconsolidated.bedwarsqueue;
 
 import io.github.reconsolidated.jediscommunicator.JedisCommunicator;
 import io.github.reconsolidated.jediscommunicator.JedisServerInfo;
+import net.md_5.bungee.api.ProxyServer;
 
 import java.util.HashMap;
 import java.util.List;
@@ -16,7 +17,7 @@ public class ServersManager implements Runnable{
         servers = new HashMap<>();
         jedis = new JedisCommunicator();
 
-        plugin.getProxy().getScheduler().schedule(plugin, this, 500, TimeUnit.MILLISECONDS);
+        plugin.getProxy().getScheduler().schedule(plugin, this, 500, 500, TimeUnit.MILLISECONDS);
     }
 
     public List<JedisServerInfo> getServers(String type) {

@@ -42,15 +42,14 @@ public final class BedwarsQueue extends Plugin {
         serversManager = new ServersManager(this);
 
         queues = new ArrayList<>();
-        queues.add(new RankedQueue(this,"bedwars1", "bedwars1", 8));
-        queues.add(new RankedQueue(this,"bedwars2", "bedwars2", 16));
-        queues.add(new RankedQueue(this,"bedwars3", "bedwars3", 12));
-        queues.add(new RankedQueue(this,"bedwars4", "bedwars4", 16));
-        queues.add(new UnrankedQueue(this,"unranked1", "bedwars1"));
-        queues.add(new UnrankedQueue(this,"unranked2", "bedwars2"));
-        queues.add(new UnrankedQueue(this,"unranked3", "bedwars3"));
-        queues.add(new UnrankedQueue(this,"unranked4", "bedwars4"));
-
+        queues.add(new RankedQueue(this,"bedwars1", "bedwars1", 8, 1));
+        queues.add(new RankedQueue(this,"bedwars2", "bedwars2", 16, 2));
+        queues.add(new RankedQueue(this,"bedwars3", "bedwars3", 12, 3));
+        queues.add(new RankedQueue(this,"bedwars4", "bedwars4", 16, 4));
+        queues.add(new UnrankedQueue(this,"unranked1", "bedwars1", 1));
+        queues.add(new UnrankedQueue(this,"unranked2", "bedwars2", 2));
+        queues.add(new UnrankedQueue(this,"unranked3", "bedwars3", 3));
+        queues.add(new UnrankedQueue(this,"unranked4", "bedwars4", 4));
 
 
         for (Queue q : queues) {
@@ -60,8 +59,6 @@ public final class BedwarsQueue extends Plugin {
             }
             serversManager.update(q.getGameModeType());
         }
-
-
 
         ProxyServer.getInstance().getPluginManager().registerListener(this, new RemoveFromQueueOnDisconnect(this));
 
@@ -128,17 +125,18 @@ public final class BedwarsQueue extends Plugin {
     }
 
     public void leaveQueue(ProxiedPlayer player) {
+        boolean left = false;
         for (Queue queue : queues) {
             if (queue.isInQueue(player)) {
                 if (queue.remove(player.getName())) {
                     player.sendMessage(ChatColor.YELLOW + "Opuszczono kolejkę.");
-                    return;
+                    left = true;
                 }
             }
         }
-        player.sendMessage(ChatColor.RED + "Nie jesteś w żadnej kolejce!");
-
-
+        if (!left) {
+            player.sendMessage(ChatColor.RED + "Nie jesteś w żadnej kolejce!");
+        }
     }
 
 }
