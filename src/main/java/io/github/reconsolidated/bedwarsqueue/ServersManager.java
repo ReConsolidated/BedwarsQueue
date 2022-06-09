@@ -2,7 +2,6 @@ package io.github.reconsolidated.bedwarsqueue;
 
 import io.github.reconsolidated.jediscommunicator.JedisCommunicator;
 import io.github.reconsolidated.jediscommunicator.JedisServerInfo;
-import net.md_5.bungee.api.ProxyServer;
 
 import java.util.HashMap;
 import java.util.List;

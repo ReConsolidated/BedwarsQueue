@@ -108,6 +108,7 @@ public class RankedQueue implements Queue, Runnable{
 
     private ServerInfo getEmptyServer() {
         List<JedisServerInfo> servers = plugin.getServersManager().getServers(gameModeType);
+        Collections.shuffle(servers);
         for (JedisServerInfo server : servers) {
             if (server.isOpen && server.currentPlayers == 0 && server.maxPlayers >= playersToStart && server.ranked) {
                 return ProxyServer.getInstance().getServerInfo(server.serverName);

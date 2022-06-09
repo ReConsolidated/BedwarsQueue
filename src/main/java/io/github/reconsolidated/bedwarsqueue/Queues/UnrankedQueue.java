@@ -11,6 +11,7 @@ import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 
+import java.util.Collections;
 import java.util.List;
 
 public class UnrankedQueue implements Queue{
@@ -53,9 +54,12 @@ public class UnrankedQueue implements Queue{
 
     private ServerInfo getServerWithSpace(int size) {
         List<JedisServerInfo> servers = plugin.getServersManager().getServers(gameModeType);
+        Collections.shuffle(servers);
         servers.sort((o1, o2) -> Integer.compare(o2.currentPlayers, o1.currentPlayers));
 
         for (JedisServerInfo server : servers) {
+            ProxyServer.getInstance().getLogger().info("serwer: %s, open: %s, mp: %d, cp: %d, rk: %s"
+                    .formatted(server.serverName, "" + server.isOpen, server.maxPlayers, server.currentPlayers, "" + server.ranked));
             if (server.isOpen && server.maxPlayers - server.currentPlayers >= size && !server.ranked) {
                 return ProxyServer.getInstance().getServerInfo(server.serverName);
             }
